@@ -4,7 +4,7 @@
 #include "opencv2/opencv.hpp"
 #include <boost/filesystem.hpp>
 
-#include "constants.h"
+#include "constants.hpp"
 
 using namespace std;
 using namespace cv;
