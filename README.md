@@ -8,7 +8,7 @@ TODO list:
 * controls for the car
   * servo controls
   * interface with motor driver circuit
-  * PID controls for stering
+  * PID controls for steering
 * look into faster ways to do line detection
 * benchmarking and profiling
 * raspberry pi improvements
