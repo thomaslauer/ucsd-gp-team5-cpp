@@ -4,7 +4,7 @@ project( UCSD-GP-Team5 )
 find_package( OpenCV REQUIRED )
 find_package( Boost 1.61 COMPONENTS filesystem REQUIRED )
 
-include_directories( lib ${Boost_INCLUDE_DIR} )
+include_directories( include ${Boost_INCLUDE_DIR} )
 
 add_executable( CaptureImage captureImage.cpp )
 target_link_libraries( CaptureImage ${OpenCV_LIBS} )
