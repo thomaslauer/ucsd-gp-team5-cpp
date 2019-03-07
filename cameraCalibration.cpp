@@ -22,9 +22,11 @@ int main(int argc, char** argv) {
     string outputFile = argv[2];
     
     Mat coverage(FRAME_HEIGHT, FRAME_WIDTH, CV_8UC3, Scalar(0,0,0));
-    for(auto& entry : boost::make_iterator_range(directory_iterator(path), {})) {
+    for(auto& entry : boost::make_iterator_range(directory_iterator(path))) {
         cout << "loading file " << entry << endl;
         Mat img = imread(entry.path().string());
+        if(img.data == nullptr) continue;
+
         Size imageSize(FRAME_WIDTH, FRAME_HEIGHT);
         resize(img, img, imageSize);
         Mat gray;
