@@ -6,6 +6,8 @@
 #include <boost/range/iterator_range.hpp>
 #include "opencv2/opencv.hpp"
 
+#include "calibration.hpp"
+
 using namespace std;
 using namespace cv;
 
@@ -14,6 +16,10 @@ private:
     Mat cameraMatrix;
     Mat distCoeffs;
     Mat H;
+
+    bool initMaps = false;
+    Mat map1;
+    Mat map2;
 
 public:
     Calibration();

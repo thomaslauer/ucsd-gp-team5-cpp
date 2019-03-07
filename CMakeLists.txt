@@ -14,3 +14,6 @@ target_link_libraries( CaptureImage ${OpenCV_LIBS} Boost::filesystem )
 
 add_executable( CameraCalibration cameraCalibration.cpp ${SOURCES} )
 target_link_libraries( CameraCalibration ${OpenCV_LIBS} Boost::filesystem )
+
+add_executable( Preview preview.cpp ${SOURCES} )
+target_link_libraries( Preview ${OpenCV_LIBS} Boost::filesystem )

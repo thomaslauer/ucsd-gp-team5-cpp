@@ -127,7 +127,15 @@ void Calibration::save(string filename) {
 }
 
 // TODO implement
-void Calibration::undistort(Mat& image) {}
+void Calibration::undistort(Mat& image) {
+    if(!initMaps) {
+        Size imageSize(FRAME_WIDTH, FRAME_HEIGHT);
+        initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat::eye(3,3,CV_32F), 
+                cameraMatrix, imageSize, CV_32FC1, map1, map2);
+    }
+
+    remap(image, image, map1, map2, INTER_LINEAR);
+}
 void Calibration::hTransform(Mat& image) {}
 
 vector<Vec3f> Calibration::chessboardWorldPoints() {
