@@ -20,6 +20,9 @@ void Calibration::generateCalibration(string calibFolder, string homographyImg) 
     vector< vector<Vec2f> > imagePoints;
     vector< vector<Vec3f> > worldPoints;
     
+    // generate size for the chessboard
+    Size patternSize(CHESSBOARD_WIDTH, CHESSBOARD_HEIGHT);
+
     Size imageSize(FRAME_WIDTH, FRAME_HEIGHT);
     Mat coverage(FRAME_HEIGHT, FRAME_WIDTH, CV_8UC3, Scalar(0,0,0));
 
@@ -37,8 +40,6 @@ void Calibration::generateCalibration(string calibFolder, string homographyImg) 
         Mat gray;
         cvtColor(img, gray, CV_BGR2GRAY);
         
-        // generate size for the chessboard
-        Size patternSize(CHESSBOARD_WIDTH, CHESSBOARD_HEIGHT);
         
         // vector to store the corners
         vector<Vec2f> corners;
@@ -70,28 +71,88 @@ void Calibration::generateCalibration(string calibFolder, string homographyImg) 
     // generate calibration from points
     calibrateCamera(worldPoints, imagePoints, imageSize, cameraMatrix, distCoeffs, rvecs, tvecs);
 
+    cout << "camera matrix:" << endl;
     cout << cameraMatrix << endl;
+    cout << "distortion coeffs:" << endl;
     cout << distCoeffs << endl;
 
     imwrite("coverage.png", coverage);
+
+    // start calculating homography
+    Mat hSource = imread(homographyImg);
+    Mat hTarget = targetChessboard();
+    Mat graySource;
+    cvtColor(hSource, graySource, CV_BGR2GRAY);
+
+    vector<Vec2f> sourcePts;
+    vector<Vec2f> targetPts;
+
+    findChessboardCorners(graySource, patternSize, sourcePts, 
+            CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE);
+    findChessboardCorners(hTarget, patternSize, targetPts, 
+            CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE);
+
+    cornerSubPix(graySource, sourcePts, Size(11, 11), Size(-1, -1), 
+            TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+    cornerSubPix(hTarget, targetPts, Size(11, 11), Size(-1, -1), 
+            TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+    
+    H = findHomography(sourcePts, targetPts);
+
+    cout << "H:" << endl;
+    cout << H << endl;
+
 }
 
+// TODO implement
 void Calibration::load(string filename) {}
+
+// TODO implement
 void Calibration::save(string filename) {}
 
+// TODO implement
 void Calibration::undistort(Mat& image) {}
 void Calibration::hTransform(Mat& image) {}
 
 vector<Vec3f> Calibration::chessboardWorldPoints() {
     vector<Vec3f> pts;
-
     for(int i = 0; i < CHESSBOARD_HEIGHT; i++) {
         for(int j = 0; j < CHESSBOARD_WIDTH; j++) {
             pts.push_back(Vec<float, 3>(i, j));
-
         }
     }
-
     return pts;
 
+}
+
+Mat Calibration::targetChessboard() {
+    Mat img(FRAME_HEIGHT, FRAME_WIDTH, CV_8UC3, Scalar(128,128,128));
+    
+    int startX = (FRAME_WIDTH - (CHESSBOARD_WIDTH + 1) * TARGET_CELL_SIZE)/2;
+    int startY = FRAME_HEIGHT - ((CHESSBOARD_HEIGHT + 1) * TARGET_CELL_SIZE)
+        - TARGET_BOTTOM_OFFSET;
+
+    int currentX = startX;
+    int currentY = startY;
+
+    int rowToggle = 1;
+
+    for(int i = 0; i < CHESSBOARD_HEIGHT + 1; i++) {
+        int colorToggle = rowToggle;
+        for(int j = 0; j < CHESSBOARD_WIDTH + 1; j++) {
+            Point p1(currentX, currentY);
+            Point p2(currentX + TARGET_CELL_SIZE, currentY + TARGET_CELL_SIZE);
+            Scalar color(255 * colorToggle, 255 * colorToggle, 255 * colorToggle);
+
+            rectangle(img, p1, p2, color, CV_FILLED);
+
+            colorToggle = (colorToggle) ? 0 : 1;
+            currentX += TARGET_CELL_SIZE;
+        }
+        currentX = startX;
+        currentY += TARGET_CELL_SIZE;
+        rowToggle = (rowToggle) ? 0 : 1;
+    }
+
+    return img;
 }

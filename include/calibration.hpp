@@ -28,6 +28,7 @@ public:
     void hTransform(Mat& img);
 
     vector<Vec3f> chessboardWorldPoints();
+    Mat targetChessboard();
 };
 
 #endif

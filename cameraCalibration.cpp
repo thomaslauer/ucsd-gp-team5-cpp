@@ -13,17 +13,18 @@ using namespace cv;
 using namespace boost::filesystem;
 
 int main(int argc, char** argv) {
-    if(argc < 3) {
+    if(argc != 4) {
         cout << "Incorrect usage:" << endl;
-        cout << argv[0] << " [source dir] [output.xml]" << endl;
+        cout << argv[0] << " [source dir] [homographyImg] [output.xml]" << endl;
         return 1;
     }
     
     string path = argv[1];
-    string outputFile = argv[2];
+    string homographyImg = argv[2];
+    string outputFile = argv[3];
 
     Calibration cb;
 
-    cb.generateCalibration(path, "homography.png");
+    cb.generateCalibration(path, homographyImg);
 
 }
