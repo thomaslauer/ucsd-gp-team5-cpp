@@ -26,5 +26,6 @@ int main(int argc, char** argv) {
     Calibration cb;
 
     cb.generateCalibration(path, homographyImg);
+    cb.save(outputFile);
 
 }

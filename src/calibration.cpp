@@ -80,19 +80,21 @@ void Calibration::generateCalibration(string calibFolder, string homographyImg) 
 
     // start calculating homography
     Mat hSource = imread(homographyImg);
+    resize(hSource, hSource, imageSize);
+    cvtColor(hSource, hSource, CV_BGR2GRAY);
+
     Mat hTarget = targetChessboard();
-    Mat graySource;
-    cvtColor(hSource, graySource, CV_BGR2GRAY);
+    cvtColor(hTarget, hTarget, CV_BGR2GRAY);
 
     vector<Vec2f> sourcePts;
     vector<Vec2f> targetPts;
 
-    findChessboardCorners(graySource, patternSize, sourcePts, 
+    findChessboardCorners(hSource, patternSize, sourcePts, 
             CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE);
     findChessboardCorners(hTarget, patternSize, targetPts, 
             CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE);
 
-    cornerSubPix(graySource, sourcePts, Size(11, 11), Size(-1, -1), 
+    cornerSubPix(hSource, sourcePts, Size(11, 11), Size(-1, -1), 
             TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
     cornerSubPix(hTarget, targetPts, Size(11, 11), Size(-1, -1), 
             TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
@@ -104,11 +106,25 @@ void Calibration::generateCalibration(string calibFolder, string homographyImg) 
 
 }
 
-// TODO implement
-void Calibration::load(string filename) {}
+void Calibration::load(string filename) {
+    FileStorage fs(filename, FileStorage::READ);
 
-// TODO implement
-void Calibration::save(string filename) {}
+    fs["cameraMatrix"] >> cameraMatrix;
+    fs["distCoeffs"] >> distCoeffs;
+    fs["H"] >> H;
+
+    fs.release();
+}
+
+void Calibration::save(string filename) {
+    FileStorage fs(filename, FileStorage::WRITE);
+
+    fs << "cameraMatrix" << cameraMatrix;
+    fs << "distCoeffs" << distCoeffs;
+    fs << "H" << H;
+
+    fs.release();
+}
 
 // TODO implement
 void Calibration::undistort(Mat& image) {}
