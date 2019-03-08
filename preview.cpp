@@ -25,15 +25,14 @@ int main(int argc, char** argv) {
     while(true) {
         t = clock();
         stream.read(cameraFrame);
-        cb.undistort(cameraFrame);
+        //cb.undistort(cameraFrame);
         cb.hTransform(cameraFrame);
         imshow("frame", cameraFrame);
         if(waitKey(1) == KEY_ESC) break;
 
         t = clock() - t;
         double time_taken = ((double)t) / CLOCKS_PER_SEC;
-        cout << 1/time_taken << " fps" << endl;
-
+        cout << "took " << time_taken << " " << 1/time_taken << " fps" << endl;
     }
 
     return 0;
