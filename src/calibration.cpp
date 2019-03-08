@@ -136,7 +136,7 @@ void Calibration::undistort(Mat& image) {
     remap(image, image, map1, map2, INTER_LINEAR);
 }
 void Calibration::hTransform(Mat& image) {
-    warpPerspective(image, image, H, image.size());
+    warpPerspective(image, image, H, image.size(), INTER_NEAREST);
 }
 
 vector<Vec3f> Calibration::chessboardWorldPoints() {

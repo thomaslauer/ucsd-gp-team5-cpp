@@ -22,7 +22,8 @@ int main(int argc, char** argv) {
     Mat cameraFrame;
     while(true) {
         stream.read(cameraFrame);
-        cb.undistort(cameraFrame);
+        cvtColor(cameraFrame, cameraFrame, CV_BGR2GRAY);
+        //cb.undistort(cameraFrame);
         cb.hTransform(cameraFrame);
         imshow("frame", cameraFrame);
         if(waitKey(1) == KEY_ESC) break;
