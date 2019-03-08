@@ -126,7 +126,6 @@ void Calibration::save(string filename) {
     fs.release();
 }
 
-// TODO implement
 void Calibration::undistort(Mat& image) {
     if(!initMaps) {
         Size imageSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -136,7 +135,9 @@ void Calibration::undistort(Mat& image) {
 
     remap(image, image, map1, map2, INTER_LINEAR);
 }
-void Calibration::hTransform(Mat& image) {}
+void Calibration::hTransform(Mat& image) {
+    warpPerspective(image, image, H, image.size());
+}
 
 vector<Vec3f> Calibration::chessboardWorldPoints() {
     vector<Vec3f> pts;

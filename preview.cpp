@@ -23,6 +23,7 @@ int main(int argc, char** argv) {
     while(true) {
         stream.read(cameraFrame);
         cb.undistort(cameraFrame);
+        cb.hTransform(cameraFrame);
         imshow("frame", cameraFrame);
         if(waitKey(1) == KEY_ESC) break;
     }
