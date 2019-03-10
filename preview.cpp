@@ -27,8 +27,8 @@ int main(int argc, char** argv) {
         stream.read(cameraFrame);
         //cb.undistort(cameraFrame);
         cb.hTransform(cameraFrame);
-        imshow("frame", cameraFrame);
-        if(waitKey(1) == KEY_ESC) break;
+        //imshow("frame", cameraFrame);
+        //if(waitKey(1) == KEY_ESC) break;
 
         t = clock() - t;
         double time_taken = ((double)t) / CLOCKS_PER_SEC;
