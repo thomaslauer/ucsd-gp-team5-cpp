@@ -1,9 +1,6 @@
 # UCSD GrandPrIEEE Team 5
 
 TODO list:
-* remake calibration code
-  * camera constants
-  * homography
 * port the rpiTest code into c++
 * controls for the car
   * servo controls
