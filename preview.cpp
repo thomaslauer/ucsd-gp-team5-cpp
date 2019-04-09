@@ -4,6 +4,7 @@
 
 #include "constants.hpp"
 #include "calibration.hpp"
+#include "filter.hpp"
 
 using namespace std;
 using namespace cv;
@@ -20,15 +21,23 @@ int main(int argc, char** argv) {
     Calibration cb;
     cb.load(argv[1]);
 
+    Filter f;
+
     clock_t t;
     Mat cameraFrame;
+    Mat gray;
     while(true) {
         t = clock();
         stream.read(cameraFrame);
+        cvtColor(cameraFrame, gray, CV_BGR2GRAY);
         //cb.undistort(cameraFrame);
         cb.hTransform(cameraFrame);
-        //imshow("frame", cameraFrame);
-        //if(waitKey(1) == KEY_ESC) break;
+        int centerPixel = (int)f.findCenter(gray, FRAME_HEIGHT / 2, 0, FRAME_WIDTH);
+        cout << "center is " << centerPixel << endl;
+        if(USE_GUI) {
+            imshow("frame", cameraFrame);
+        }
+        if(waitKey(1) == KEY_ESC) break;
 
         t = clock() - t;
         double time_taken = ((double)t) / CLOCKS_PER_SEC;
