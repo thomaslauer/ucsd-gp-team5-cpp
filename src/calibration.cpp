@@ -113,6 +113,13 @@ void Calibration::load(string filename) {
     fs["distCoeffs"] >> distCoeffs;
     fs["H"] >> H;
 
+    cout << "camera matrix is" << endl;
+    cout << cameraMatrix << endl;
+    cout << "distCoeffs is" << endl;
+    cout << distCoeffs << endl;
+    cout << "H is" << endl;
+    cout << H << endl;
+
     fs.release();
 }
 
@@ -128,12 +135,14 @@ void Calibration::save(string filename) {
 
 void Calibration::undistort(Mat& image) {
     if(!initMaps) {
+        cout << "building undistortion maps" << endl;
+        initMaps = true;
         Size imageSize(FRAME_WIDTH, FRAME_HEIGHT);
         initUndistortRectifyMap(cameraMatrix, distCoeffs, Mat::eye(3,3,CV_32F), 
                 cameraMatrix, imageSize, CV_32FC1, map1, map2);
     }
 
-    remap(image, image, map1, map2, INTER_LINEAR);
+    remap(image, image, map1, map2, INTER_NEAREST);
 }
 void Calibration::hTransform(Mat& image) {
     warpPerspective(image, image, H, image.size(), INTER_NEAREST);
